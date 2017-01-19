@@ -1,0 +1,16 @@
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+
+*.csproj
+*.unityproj
+*.sln
+
+Assembly-Boo-vs.booproj
+Assembly-Boo.booproj
+
+.DS_Store
+
+*.sublime-*
+*.userprefs
