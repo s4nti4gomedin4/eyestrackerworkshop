@@ -5,11 +5,12 @@ using Tobii.EyeTracking;
 
 public class ObjecSelected : MonoBehaviour {
 
-	public Renderer renderer;
-	GazeAware gaze;
+	private  MeshRenderer renderer;
+	private GazeAware gaze;
 	// Use this for initialization
 	void Start () {
 		gaze = GetComponent<GazeAware> ();
+		renderer = GetComponent<MeshRenderer> ();
 	}
 	
 	// Update is called once per frame

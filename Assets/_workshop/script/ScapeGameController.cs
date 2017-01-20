@@ -2,66 +2,83 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Tobii.EyeTracking;
+using UnityEngine.UI;
 
 public class ScapeGameController : MonoBehaviour
 {
-
+	public TypeControlle controllSelected;
 	public Transform panelUsers;
 	public Transform panelPositions;
-
-
-	float LIMIT_CONTROLL_LOCKED_TIME = 0.2f;
-	float timeControllLocked = 0;
-
-	public enum TypeControlle
-	{
-MoveWithEyes,
-MoveWithControl}
-
-	;
-
-	public TypeControlle controllSelected;
-
+	public Transform panelFood;
+	public GameObject PanelUi;
 	public GameObject userTrackingWithRigiPrefab;
-	public GameObject userControllMovement;
-
+	public GameObject userControlMovement;
+	public GameObject foodObject;
+	public GameObject enemy;
+	public Text message;
 	private int indexUser;
+	public int FoodNumber=10;
+	private float LIMIT_CONTROLL_LOCKED_TIME = 0.2f;
+	private float timeControllLocked = 0;
 	private TrackingWithRigi[] usersTrackingWithRigi;
 	private MoveWithControll[] usersMoveWithControll;
-	private List<GameObject> activeUsers;
-
+	private bool playing;
 
 
 
 	IEnumerator Start ()
 	{
+		
+		PanelUi.SetActive (false);
+		playing = false;
+		enemy.transform.position = Vector3.zero;
+		enemy.SetActive (true);
 		indexUser = 0;
-		activeUsers = new List<GameObject> ();
 		if (controllSelected == TypeControlle.MoveWithEyes) {
 			
-			foreach(Transform positionUser in panelPositions) {
-				var newUser = Instantiate (userTrackingWithRigiPrefab);
-				newUser.transform.position = positionUser.position;
-				newUser.transform.SetParent (panelUsers);
-			}
+			CreatePlayers (userTrackingWithRigiPrefab);
 			yield return null;
 			usersTrackingWithRigi = panelUsers.GetComponentsInChildren<TrackingWithRigi> ();
-		} else if (controllSelected == TypeControlle.MoveWithControl) {
-			foreach(Transform positionUser in panelPositions) {
-				var newUser = Instantiate (userControllMovement);
-				newUser.transform.position = positionUser.position;
-				newUser.transform.SetParent (panelUsers);
 
-			}
+		} else if (controllSelected == TypeControlle.MoveWithControl) {
+			
+			CreatePlayers (userControlMovement);
 			yield return null;
 			usersMoveWithControll = panelUsers.GetComponentsInChildren<MoveWithControll> ();
 
 		}
-	
+
+		createFood ();
+		playing = true;
+	}
+	public void createFood(){
+		DestroyChilds (panelFood);
+		for (int i = 0; i < FoodNumber; i++) {
+			var newFood = Instantiate (foodObject);
+			Vector3 newPosition = Vector3.zero;
+			newPosition.x = Random.Range (-7.37f, 7.37f);
+			newPosition.z = Random.Range (-3, 3);
+			newFood.transform.position = newPosition;
+			newFood.transform.SetParent (panelFood);
+		}
+	}
+	public void CreatePlayers( GameObject objectUser){
+
+		DestroyChilds (panelUsers);
+		foreach(Transform positionUser in panelPositions) {
+			var newUser = Instantiate (objectUser);
+			newUser.transform.position = positionUser.position;
+			newUser.transform.SetParent (panelUsers);
+		}
+	}
+	public void DestroyChilds(Transform panelToDestroyChilds){
+		foreach (Transform child in panelToDestroyChilds) {
+			DestroyImmediate (child.gameObject);
+		}
 	}
 
 
-	public Transform getActiveUsers ()
+	public Transform GetUserPanel ()
 	{
 		/*if (activeUsers.Count == 0) {
 			if (controllSelected == TypeControlle.MoveWithEyes) {
@@ -88,11 +105,43 @@ MoveWithControl}
 		}*/	
 		return panelUsers;
 	}
+	public void ClearGameObjects(){
+		DestroyChilds (panelFood);
+		DestroyChilds (panelUsers);
+		enemy.SetActive (false);
+	}
+
+	public void UserWin(){
+		print ("win");
+		PanelUi.SetActive (true);
+		message.text="You Win!";
+		playing = false;
+		ClearGameObjects ();
+	}
+	public void Userlose(){
+		print ("lose");
+		PanelUi.SetActive (true);
+		message.text="You Lose!";
+		playing = false;
+		ClearGameObjects ();
+	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		
+		if (!playing) {
+			return;
+		}
+		if (panelFood.childCount == 0) {
+			UserWin ();
+			playing = false;
+			return;
+		}
+		if (panelUsers.childCount == 0) {
+			Userlose ();
+			playing = false;
+			return;
+		}
 
 		//If move the controll
 
@@ -136,15 +185,19 @@ MoveWithControl}
 					}
 				}
 			}
-
-		
-			 
+ 
 		}
 		
-
-
-
-
-		
 	}
+	public void OnAcept(){
+		
+		StartCoroutine (Start ());
+	}
+
+	public enum TypeControlle
+	{
+		MoveWithEyes,
+		MoveWithControl}
+
+	;
 }

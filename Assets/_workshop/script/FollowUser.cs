@@ -52,7 +52,7 @@ public class FollowUser : MonoBehaviour
 	public Transform getUserToFollow ()
 	{
 		//Get all users
-		Transform users=controller.getActiveUsers ();
+		Transform users=controller.GetUserPanel ();
 		//If users size is 0 return null
 		if (users.childCount == 0) {
 			return null;

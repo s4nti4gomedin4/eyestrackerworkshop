@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [RequireComponent (typeof (Rigidbody))]
 [RequireComponent (typeof (Collider))]
-public class DestroyPlayer : MonoBehaviour {
+public class EatFood : MonoBehaviour {
 
 	void OnCollisionEnter(Collision col){
-		print ("OnCollisionEnter");
-		if (col.gameObject.CompareTag ("Player")) {
+		if (col.gameObject.CompareTag ("Food")) {
 			Destroy (col.gameObject);
 		}
 	}

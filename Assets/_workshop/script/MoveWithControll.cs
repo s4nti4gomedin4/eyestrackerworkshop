@@ -11,9 +11,7 @@ public class MoveWithControll : MonoBehaviour {
 	public GameObject selected;
 	public bool beingUsed; 
 	public float speed=0.01f;
-	private Renderer rend;
 	void Start () {
-		rend = GetComponent<Renderer> ();
 	}
 	
 	void Update () {
