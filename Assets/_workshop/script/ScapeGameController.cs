@@ -13,24 +13,56 @@ public class ScapeGameController : MonoBehaviour
 	public GameObject PanelUi;
 	public GameObject userTrackingWithRigiPrefab;
 	public GameObject userControlMovement;
-	public GameObject foodObject;
+	public FoodObject foodObject;
 	public GameObject enemy;
 	public Text message;
-	private int indexUser;
-	public int FoodNumber=10;
+	public Text scoreText;
+
+	public int FoodNumber = 10;
 	private float LIMIT_CONTROLL_LOCKED_TIME = 0.2f;
 	private float timeControllLocked = 0;
 	private TrackingWithRigi[] usersTrackingWithRigi;
 	private MoveWithControll[] usersMoveWithControll;
 	private bool playing;
+	private int score;
+	private int indexUser;
+	private const int foodScoreValue = 10;
+	private EatFood lasObjectEatFood;
+	public  int penaltyFood ;
+	public static int penaltyFoodWillbe=10;
+	 
 
+	void OnEnable(){
+		EatFood.eat += EatHandler;
+	}
 
+	void OnDisable(){
+		EatFood.eat -= EatHandler;
+	}
+
+	public void EatHandler(EatFood objectEat){
+		if (lasObjectEatFood == objectEat) {
+			penaltyFood++;
+			penaltyFood=Mathf.Clamp (penaltyFood, 0, foodScoreValue);
+		}
+		lasObjectEatFood = objectEat;
+		int scoreByfood = foodScoreValue - penaltyFood;
+		score += scoreByfood * panelUsers.childCount;
+		printScore ();
+	}
+	public void printScore(){
+		int maxScore = foodScoreValue * FoodNumber * panelPositions.childCount;
+		scoreText.text = string.Format ("Score: {0}/{1}",score,maxScore);
+	}
 
 	IEnumerator Start ()
 	{
-		
+		penaltyFoodWillbe = foodScoreValue;
+		penaltyFood = 0;
 		PanelUi.SetActive (false);
 		playing = false;
+		score = 0;
+		printScore ();
 		enemy.transform.position = Vector3.zero;
 		enemy.SetActive (true);
 		indexUser = 0;
@@ -129,6 +161,7 @@ public class ScapeGameController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		penaltyFoodWillbe = foodScoreValue;
 		if (!playing) {
 			return;
 		}
@@ -178,8 +211,27 @@ public class ScapeGameController : MonoBehaviour
 				for (int i = 0; i < objects.Length; i++) {
 					if (objects [i].CompareTag ("Player")) {
 						for (int j = 0; j < usersMoveWithControll.Length; j++) {
-							if(usersMoveWithControll [j]!=null)
+							if (usersMoveWithControll [j] != null) {
 								usersMoveWithControll [j].beingUsed = usersMoveWithControll [j].gameObject == objects [i].gameObject;
+								if (usersMoveWithControll [j].beingUsed) {
+									if (lasObjectEatFood != null) {
+										if (usersMoveWithControll [j].gameObject == lasObjectEatFood.gameObject) {
+											
+											int nextPenalty = foodScoreValue - (penaltyFood + 1);
+
+											penaltyFoodWillbe = Mathf.Clamp (nextPenalty, 0, foodScoreValue);
+										} else {
+											print ("selected new foodeatobject");
+											ScapeGameController.penaltyFoodWillbe=foodScoreValue;
+										}
+									} else {
+										ScapeGameController.penaltyFoodWillbe=foodScoreValue;
+									}
+
+								}
+								
+							}
+								
 						}
 						break;
 					}
