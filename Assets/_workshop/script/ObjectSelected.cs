@@ -16,7 +16,7 @@ public class ObjectSelected : MonoBehaviour {
 	void Start () {
 		//Get the GazeAware Object
 		gaze = GetComponent<GazeAware> ();
-		renderer = GetComponent<MeshRenderer> ();
+		renderer = GetComponent<Renderer> ();
 	}
 	
 	void Update () {

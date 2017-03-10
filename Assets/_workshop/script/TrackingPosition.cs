@@ -24,6 +24,9 @@ public class TrackingPosition : MonoBehaviour {
 
 	void Start () {
 		EyeTracking.Initialize ();
+		if (positionObject == null) {
+			positionObject = gameObject;
+		}
 
 	}
 	
@@ -47,7 +50,7 @@ public class TrackingPosition : MonoBehaviour {
 			posTracking.z = 0;
 
 			//Print position
-			print (string.Format ("Position: {0}", posTracking));
+			//print (string.Format ("Position: {0}", posTracking));
 
 			//Set the position to object tracking position
 			positionObject.transform.position =posTracking;
@@ -55,9 +58,7 @@ public class TrackingPosition : MonoBehaviour {
 			//Print the object focused name
 			if (EyeTracking.GetFocusedObject () != null) {
 				print (string.Format ("Focus object {0}", EyeTracking.GetFocusedObject ().name));
-			} else {
-				Debug.LogError ("Focus object is null");
-			}
+			} 
 		}
 
 	}
