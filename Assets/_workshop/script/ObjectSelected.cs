@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using Tobii.EyeTracking;
 
-public class ObjecSelected : MonoBehaviour {
-
-	private  MeshRenderer renderer;
+public class ObjectSelected : MonoBehaviour {
+	/// <summary>
+	/// The object renderer
+	/// </summary>
+	public Renderer renderer;
+	/// <summary>
+	/// The gazeaware object from tobbi sdk.
+	/// </summary>
 	private GazeAware gaze;
-	// Use this for initialization
+
 	void Start () {
+		//Get the GazeAware Object
 		gaze = GetComponent<GazeAware> ();
 		renderer = GetComponent<MeshRenderer> ();
 	}
 	
-	// Update is called once per frame
 	void Update () {
+		//Check if the object is selected and change color to red or white.
 		if (gaze.HasGazeFocus) {
 			renderer.material.color = Color.red;
 		} else {
